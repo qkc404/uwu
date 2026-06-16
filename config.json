@@ -12,7 +12,7 @@
       },
       "streamSettings": {
         "network": "ws",
-        "wsSettings": {"path": "/saeka-tojirp"},
+        "wsSettings": {"path": "/saeka-tojirp/?ed=2560"},
         "sockopt": {
           "tcpFastOpen": true,
           "tcpNoDelay": true,
@@ -34,7 +34,7 @@
       "streamSettings": {
         "network": "httpupgrade",
         "httpupgradeSettings": {
-          "path": "/saeka",
+          "path": "/saeka/?ed=2560",
           "host": ""
         },
         "sockopt": {
