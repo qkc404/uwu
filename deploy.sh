@@ -43,10 +43,21 @@ case "$PAIR_CHOICE" in
     *) CPU="2"; RAM="4Gi" ;;
 esac
 
-DECOY_IP=$(dig +short "$CLEAN_DECOY" @8.8.8.8 | head -1)
-DECOY_IP=${DECOY_IP:-"142.250.197.97"}
-sed -i "s|CLEAN_DECOY|$CLEAN_DECOY|g" nginx.conf
-sed -i "s|DECOY_IP|$DECOY_IP|g" nginx.conf
+# Fix decoy - replace both domain and IP in nginx.conf
+if [ -f "nginx.conf" ]; then
+    # Get decoy IP
+    DECOY_IP=$(dig +short "$CLEAN_DECOY" @8.8.8.8 | head -1)
+    DECOY_IP=${DECOY_IP:-"142.250.197.97"}
+    
+    # Replace placeholders
+    sed -i "s|CLEAN_DECOY|$CLEAN_DECOY|g" nginx.conf
+    sed -i "s|DECOY_IP|$DECOY_IP|g" nginx.conf
+    
+    echo -e "${GREEN}Decoy set to: $CLEAN_DECOY ($DECOY_IP)${RESET}"
+else
+    echo -e "${RED}ERROR: nginx.conf not found!${RESET}"
+    exit 1
+fi
 
 echo -e "\n${CYAN} PROCESSING (⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)... ${RESET}"
 
