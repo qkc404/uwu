@@ -1,12 +1,12 @@
 {
-  "log": {"loglevel": "none"},
-  "dns": {"servers": ["8.8.8.8", "1.1.1.1"]},
+  "log": {"loglevel": "warning"},
+  "dns": {"servers": ["1.1.1.1", "8.8.8.8"]},
   "inbounds": [
     {
       "port": 10000,
       "listen": "127.0.0.1",
       "protocol": "trojan",
-      "tag": "trojan",
+      "tag": "trojan-ws",
       "settings": {
         "clients": [{"password": "saeka"}]
       },
@@ -16,7 +16,33 @@
         "sockopt": {
           "tcpFastOpen": true,
           "tcpNoDelay": true,
-          "tcpKeepAliveInterval": 30
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpKeepAliveCount": 5
+        }
+      },
+      "sniffing": {"enabled": true, "destOverride": ["http", "tls"]}
+    },
+    {
+      "port": 10001,
+      "listen": "127.0.0.1",
+      "protocol": "trojan",
+      "tag": "trojan-httpupgrade",
+      "settings": {
+        "clients": [{"password": "saeka"}]
+      },
+      "streamSettings": {
+        "network": "httpupgrade",
+        "httpupgradeSettings": {
+          "path": "/saeka?ed=1280",
+          "host": ""
+        },
+        "sockopt": {
+          "tcpFastOpen": true,
+          "tcpNoDelay": true,
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpKeepAliveCount": 5
         }
       },
       "sniffing": {"enabled": true, "destOverride": ["http", "tls"]}
@@ -31,9 +57,11 @@
         "sockopt": {
           "tcpFastOpen": true,
           "tcpNoDelay": true,
-          "tcpKeepAliveInterval": 30
+          "tcpKeepAliveIdle": 30,
+          "tcpKeepAliveInterval": 15,
+          "tcpKeepAliveCount": 5
         }
       }
     }
   ]
-    }
+}
