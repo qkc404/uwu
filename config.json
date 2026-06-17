@@ -1,67 +1,88 @@
 {
-  "log": {"loglevel": "warning"},
-  "dns": {"servers": ["1.1.1.1", "8.8.8.8"]},
-  "inbounds": [
-    {
-      "port": 10000,
-      "listen": "127.0.0.1",
-      "protocol": "trojan",
-      "tag": "trojan-ws",
-      "settings": {
-        "clients": [{"password": "saeka"}]
-      },
-      "streamSettings": {
-        "network": "ws",
-        "wsSettings": {"path": "/saeka-tojirp"},
-        "sockopt": {
-          "tcpFastOpen": true,
-          "tcpNoDelay": true,
-          "tcpKeepAliveIdle": 30,
-          "tcpKeepAliveInterval": 15,
-          "tcpKeepAliveCount": 5
-        }
-      },
-      "sniffing": {"enabled": true, "destOverride": ["http", "tls"]}
+    "log": {"loglevel": "warning"},
+    "dns": {
+        "servers": [
+            "1.1.1.1",
+            "8.8.8.8",
+            "https+local://dns.cloudflare.com/dns-query"
+        ],
+        "queryStrategy": "UseIPv4",
+        "disableCache": false,
+        "disableFallback": false
     },
-    {
-      "port": 10001,
-      "listen": "127.0.0.1",
-      "protocol": "trojan",
-      "tag": "trojan-httpupgrade",
-      "settings": {
-        "clients": [{"password": "saeka"}]
-      },
-      "streamSettings": {
-        "network": "httpupgrade",
-        "httpupgradeSettings": {
-          "path": "/saeka",
-          "host": ""
+    "inbounds": [
+        {
+            "port": 10000,
+            "listen": "127.0.0.1",
+            "protocol": "trojan",
+            "tag": "trojan-ws",
+            "settings": {
+                "clients": [{"password": "saeka"}]
+            },
+            "streamSettings": {
+                "network": "ws",
+                "wsSettings": {"path": "/saeka-tojirp"},
+                "sockopt": {
+                    "tcpFastOpen": true,
+                    "tcpNoDelay": true,
+                    "tcpKeepAliveIdle": 15,
+                    "tcpKeepAliveInterval": 10,
+                    "tcpKeepAliveCount": 3,
+                    "tcpcongestion": "bbr"
+                }
+            },
+            "sniffing": {"enabled": true, "destOverride": ["http", "tls"]}
         },
-        "sockopt": {
-          "tcpFastOpen": true,
-          "tcpNoDelay": true,
-          "tcpKeepAliveIdle": 30,
-          "tcpKeepAliveInterval": 15,
-          "tcpKeepAliveCount": 5
+        {
+            "port": 10001,
+            "listen": "127.0.0.1",
+            "protocol": "trojan",
+            "tag": "trojan-httpupgrade",
+            "settings": {
+                "clients": [{"password": "saeka"}]
+            },
+            "streamSettings": {
+                "network": "httpupgrade",
+                "httpupgradeSettings": {
+                    "path": "/saeka?ed=1280",
+                    "host": ""
+                },
+                "sockopt": {
+                    "tcpFastOpen": true,
+                    "tcpNoDelay": true,
+                    "tcpKeepAliveIdle": 15,
+                    "tcpKeepAliveInterval": 10,
+                    "tcpKeepAliveCount": 3,
+                    "tcpcongestion": "bbr"
+                }
+            },
+            "sniffing": {"enabled": true, "destOverride": ["http", "tls"]}
         }
-      },
-      "sniffing": {"enabled": true, "destOverride": ["http", "tls"]}
-    }
-  ],
-  "outbounds": [
-    {
-      "protocol": "freedom",
-      "tag": "direct",
-      "settings": {"domainStrategy": "UseIPv4"},
-      "streamSettings": {
-        "sockopt": {
-          "tcpFastOpen": true,
-          "tcpNoDelay": true,
-          "tcpKeepAliveIdle": 30,
-          "tcpKeepAliveInterval": 15,
-          "tcpKeepAliveCount": 5
+    ],
+    "outbounds": [
+        {
+            "protocol": "freedom",
+            "tag": "direct",
+            "settings": {
+                "domainStrategy": "UseIPv4",
+                "userLevel": 0
+            },
+            "streamSettings": {
+                "sockopt": {
+                    "tcpFastOpen": true,
+                    "tcpNoDelay": true,
+                    "tcpKeepAliveIdle": 15,
+                    "tcpKeepAliveInterval": 10,
+                    "tcpKeepAliveCount": 3,
+                    "tcpcongestion": "bbr"
+                }
+            },
+            "mux": {
+                "enabled": true,
+                "concurrency": 8,
+                "xudpConcurrency": 16,
+                "xudpProxyUDP443": "reject"
+            }
         }
-      }
-    }
-  ]
+    ]
 }
